@@ -1,1 +1,10 @@
-spring.application.name=pedidos
+spring:
+  application:
+    name: pedidos
+rabbitmq:
+  queue:
+    pedidos: pedidos.entrada
+  host: localhost
+  port: 5672
+  username: guest
+  password: guest
