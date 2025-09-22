@@ -1,5 +1,6 @@
 package com.pedidos.service.impl;
 
+import com.pedidos.dto.PedidoStatusMemory;
 import com.pedidos.dto.request.PedidoPostRequest;
 import com.pedidos.dto.response.PedidoPostResponse;
 import com.pedidos.model.Pedido;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class PedidoServiceImpl implements PedidoService {
 
     private final RabbitTemplate rabbitTemplate;
+    private final PedidoStatusMemory statusMemory;
 
     @Value("${rabbitmq.queue.pedidos}")
     private String pedidosQueue;
@@ -30,9 +32,15 @@ public class PedidoServiceImpl implements PedidoService {
                 .dataCriacao(LocalDateTime.now())
                 .build();
 
+        statusMemory.atualizarStatus(pedido.getId(), "RECEBIDO");
         rabbitTemplate.convertAndSend(pedidosQueue, pedido);
 
         return PedidoPostResponse.toDTO(pedido);
+    }
+
+    @Override
+    public String consultarStatus(UUID id) {
+        return statusMemory.consultarStatus(id);
     }
 
 }
