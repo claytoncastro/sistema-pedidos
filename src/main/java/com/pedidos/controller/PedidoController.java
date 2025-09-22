@@ -1,6 +1,7 @@
 package com.pedidos.controller;
 
 import com.pedidos.dto.request.PedidoPostRequest;
+import com.pedidos.dto.response.PedidoPostResponse;
 import com.pedidos.service.PedidoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,11 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @PostMapping
-    public ResponseEntity<?> criarPedido(@Valid @RequestBody PedidoPostRequest pedido) {
+    public ResponseEntity<PedidoPostResponse> criarPedido(@Valid @RequestBody PedidoPostRequest pedido) {
         var pedidoResult = pedidoService.enviarPedido(pedido);
-        return ResponseEntity.accepted().body(Map.of("id", pedidoResult.id()));
+
+        return ResponseEntity
+                .accepted()
+                .body(pedidoResult);
     }
 }

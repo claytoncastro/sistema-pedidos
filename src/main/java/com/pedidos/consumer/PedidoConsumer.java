@@ -25,13 +25,23 @@ public class PedidoConsumer {
             throw new RuntimeException("Erro no processamento");
         }
 
-        StatusPedido status = new StatusPedido(pedido.getId(), "SUCESSO", LocalDateTime.now(), null);
+        var status = StatusPedido.builder()
+                .idPedido(pedido.getId())
+                .status("SUCESSO")
+                .dataProcessamento(LocalDateTime.now())
+                .mensagemErro(null)
+                .build();
         rabbitTemplate.convertAndSend("pedidos.status.sucesso.clayton", status);
     }
 
     @RabbitListener(queues = "pedidos.entrada.clayton.dlq")
     public void processarFalha(Pedido pedido) {
-        StatusPedido status = new StatusPedido(pedido.getId(), "FALHA", null, "Erro no processamento");
+        var status = StatusPedido.builder()
+                .idPedido(pedido.getId())
+                .status("FALHA")
+                .dataProcessamento(LocalDateTime.now())
+                .mensagemErro("Erro no processamento")
+                .build();
         rabbitTemplate.convertAndSend("pedidos.status.falha.clayton", status);
     }
 }
